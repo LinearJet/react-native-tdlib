@@ -1,44 +1,61 @@
 # .github/workflows/build-android.yml
 
-name: Build Android APK
+name: Build Android Example APK
 
-# This workflow will run on every push to the main branch,
-# or can be triggered manually from the GitHub Actions tab.
+# This workflow runs whenever you push code to the 'main' branch
 on:
   push:
     branches: [ "main" ]
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
   build:
-    # Use the latest Ubuntu runner provided by GitHub
+    # The type of machine to run the job on
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Check out the repository's code
+      # Step 1: Get the code from your repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Set up Java Development Kit (JDK) version 11
-      # This is the version we know is compatible.
+      # Step 2: Set up Node.js so we can run 'npm install'
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      # Step 3: Set up Java Development Kit (JDK) 11
       - name: Set up JDK 11
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
 
-      # Step 3: Set up Node.js for running npm commands
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: 'example/package-lock.json' # Cache node_modules for speed
+      # Step 4: Set up the Android SDK. This is the magic step.
+      # This action automatically downloads the SDK and sets ANDROID_HOME.
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
 
-      # Step 4: Install project dependencies
-      # We navigate into the example folder and run npm install
+      # Step 5: Install the project's dependencies
       - name: Install dependencies
-        run: cd example && npm install
+        run: npm install
+        working-directory: ./example # Run this command inside the 'example' folder
 
-      # Step 5: Create the local.properties file
-      
+      # Step 6: Make the Gradle wrapper executable. A necessary step on Linux.
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+        working-directory: ./example/android
+
+      # Step 7: Run the Gradle build to create the debug APK
+      - name: Build debug APK
+        run: ./gradlew assembleDebug
+        working-directory: ./example/android
+
+      # Step 8: Upload the generated APK as an artifact
+      # This makes the APK available for download from the workflow's summary page.
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: skyth-example-apk
+          path: example/android/app/build/outputs/apk/debug/app-debug.apk
