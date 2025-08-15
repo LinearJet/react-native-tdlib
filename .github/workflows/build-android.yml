@@ -20,20 +20,17 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Set up JDK 11
+      # --- THE ONLY CHANGE THAT MATTERS ---
+      # We are upgrading the engine to match the tools' requirements.
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
 
-      # --- THE FIX IS HERE ---
-      # We are now commanding it to use specific, older tools compatible with Java 11.
+      # Back to the simple version, as it will now work with Java 17.
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3 # v3 of the action is still fine
-        with:
-          api-level: 33 # Target a specific, stable API level
-          build-tools: 33.0.0 # Use a specific version of the build tools
-          ndk: 23.1.7779620 # Pin the NDK version for consistency
+        uses: android-actions/setup-android@v3
 
       - name: Install dependencies
         run: npm install
@@ -47,9 +44,8 @@ jobs:
         run: ./gradlew assembleDebug
         working-directory: ./example/android
 
-      # --- UPDATED ARTIFACT UPLOAD ---
       - name: Upload APK
-        uses: actions/upload-artifact@v4 # Use the latest version as you suggested
+        uses: actions/upload-artifact@v4
         with:
           name: skyth-example-apk
           path: example/android/app/build/outputs/apk/debug/app-debug.apk
