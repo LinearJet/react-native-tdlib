@@ -14,7 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import com.reactnativetdlib.tdlibclient.TdLibPackage;
-import com.reactnativetdlib.TdLibPackage;
 
 
 public class MainApplication extends Application implements ReactApplication {
