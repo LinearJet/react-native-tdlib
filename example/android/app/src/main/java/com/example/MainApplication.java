@@ -13,8 +13,7 @@ import com.example.newarchitecture.MainApplicationReactNativeHost;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import com.reactnativetdlib.tdlibclient.TdLibPackage;
-
+// NO MANUAL IMPORT HERE
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -29,10 +28,9 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
-          packages.add(new TdLibPackage());
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
-          packages.add(new TdLibPackage());
+          // NO MANUAL ADDITIONS HERE
           return packages;
         }
 
