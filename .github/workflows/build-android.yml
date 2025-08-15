@@ -1,0 +1,44 @@
+# .github/workflows/build-android.yml
+
+name: Build Android APK
+
+# This workflow will run on every push to the main branch,
+# or can be triggered manually from the GitHub Actions tab.
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    # Use the latest Ubuntu runner provided by GitHub
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the repository's code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Java Development Kit (JDK) version 11
+      # This is the version we know is compatible.
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      # Step 3: Set up Node.js for running npm commands
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'example/package-lock.json' # Cache node_modules for speed
+
+      # Step 4: Install project dependencies
+      # We navigate into the example folder and run npm install
+      - name: Install dependencies
+        run: cd example && npm install
+
+      # Step 5: Create the local.properties file
+      
